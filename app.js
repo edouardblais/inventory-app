@@ -6,13 +6,14 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var shopRouter = require('./routes/shop');
 
 var app = express();
 
 // Set up mongoose connection
 const mongoose = require("mongoose");
 // put password in 
-const mongoDB = "mongodb+srv://edouardblais:*****@cluster0.utbckoz.mongodb.net/inventory_app?retryWrites=true&w=majority";
+const mongoDB = "mongodb+srv://edouardblais:sk84life@cluster0.utbckoz.mongodb.net/inventory_app?retryWrites=true&w=majority";
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
@@ -30,6 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/shop', shopRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
