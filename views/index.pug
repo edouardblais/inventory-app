@@ -2,4 +2,15 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Home page to see what is in store at the moment
+
+  h1 Dynamic content
+
+  if error
+    p Error getting dynamic content.
+  else
+    p The shop has the following categories and gear counts:
+
+    ul
+      li #[strong Categories:] !{data.categories_count} different categories
+      li #[strong Gear:] !{data.gear_count} different items

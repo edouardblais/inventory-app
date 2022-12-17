@@ -5,7 +5,7 @@ const router = express.Router();
 const gear_controller = require("../controllers/gearController");
 const category_controller = require("../controllers/categoryController");
 
-// GET catalog home page.
+// GET shop home page.
 router.get("/", category_controller.index);
 
 // Categories

@@ -1,7 +1,26 @@
 const Category = require("../models/category");
+const Gear = require("../models/gear");
+
+const async = require("async");
 
 exports.index = (req, res) => {
-  res.send("NOT IMPLEMENTED: Site Home Page");
+  async.parallel(
+    {
+      gear_count(callback) {
+        Gear.countDocuments({}, callback); 
+      },
+      categories_count(callback) {
+        Category.countDocuments({}, callback);
+      },
+    },
+    (err, results) => {
+      res.render("index", {
+        title: "Climbing Shop Inventory",
+        error: err,
+        data: results,
+      });
+    }
+  );
 };
 
 // Display list of all categories.
