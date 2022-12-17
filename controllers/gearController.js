@@ -1,8 +1,16 @@
 const Gear = require("../models/gear");
 
 // Display list of all gear.
-exports.gear_list = (req, res) => {
-  res.send("NOT IMPLEMENTED: gear list");
+exports.gear_list = function (req, res, next) {
+  Gear.find({}, "name brand category price number_in_stock")
+    .sort({ category: 1 })
+    .populate("category")
+    .exec(function (err, list_gear) {
+      if (err) {
+        return next(err);
+      }
+      res.render("gear_list", { title: "Gear List", gear_list: list_gear });
+    });
 };
 
 // Display detail page for a specific gear.

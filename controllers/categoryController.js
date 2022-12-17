@@ -24,10 +24,16 @@ exports.index = (req, res) => {
 };
 
 // Display list of all categories.
-exports.categories_list = (req, res) => {
-  res.send("NOT IMPLEMENTED: Categories list");
+exports.categories_list = function (req, res, next) {
+  Category.find({}, "name")
+    .sort({ name: 1 })
+    .exec(function (err, list_categories) {
+      if (err) {
+        return next(err);
+      }
+      res.render("categories_list", { title: "List of all categories", categories_list: list_categories });
+    });
 };
-
 // Display detail page for a specific category.
 exports.category_detail = (req, res) => {
   res.send(`NOT IMPLEMENTED: Category detail: ${req.params.name}`);
