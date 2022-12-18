@@ -1,5 +1,7 @@
 const Gear = require("../models/gear");
 
+const async = require('async');
+
 // Display list of all gear.
 exports.gear_list = function (req, res, next) {
   Gear.find({}, "name brand category price number_in_stock")
@@ -13,10 +15,35 @@ exports.gear_list = function (req, res, next) {
     });
 };
 
-// Display detail page for a specific gear.
-exports.gear_detail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: gear detail: ${req.params.id}`);
+// Display detail page for a specific piece of gear.
+exports.gear_detail = (req, res, next) => {
+  async.parallel(
+    {
+      gear(callback) {
+        Gear.findById(req.params.id)
+          .populate("category")
+          .exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.gear == null) {
+        // No results.
+        const err = new Error("Gear not found");
+        err.status = 404;
+        return next(err);
+      }
+      // Successful, so render.
+      res.render("gear_detail", {
+        title: results.gear.name,
+        gear: results.gear,
+      });
+    }
+  );
 };
+
 
 // Display gear create form on GET.
 exports.gear_create_get = (req, res) => {

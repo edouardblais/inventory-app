@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1 #{gear.name}
+
+  p #[strong Category:]
+    a(href=gear.category.url)  #{gear.category.name}
+  p #[strong Brand:] #{gear.brand}
+  p #[strong Description:] #{gear.description}
+  p #[strong Price:] #{gear.price} $
+  p #[strong Number in stock:] #{gear.number_in_stock}
+
+  

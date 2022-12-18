@@ -1,0 +1,16 @@
+extends layout
+
+block content
+
+  h1 Category: #{category.name}
+
+  div(style='margin-left:20px;margin-top:20px')
+
+    dl
+      each gear in category_gear
+        dt
+          a(href=gear.url) #{gear.name}
+        dd #{gear.brand} - #{gear.price}$ - #{gear.number_in_stock} in stock
+
+      else
+        p This category has no gear.

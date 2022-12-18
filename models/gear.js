@@ -12,7 +12,7 @@ const GearSchema = new Schema({
 });
 
 GearSchema.virtual('url').get(function() {
-    return `/shop/gear/${this._id}`;
+    return `/shop/gear/${this.name}/${this._id}`;
 });
 
 module.exports = mongoose.model('Gear', GearSchema);

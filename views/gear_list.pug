@@ -7,10 +7,7 @@ block content
     each gear in gear_list
       li
         a(href=gear.url) #{gear.name}
-        |  #{gear.category.name}
-        |  From: #{gear.brand}
-        |  Price: #{gear.price}
-        |  Number in stock: #{gear.number_in_stock}
+        |  (#{gear.brand}) - #{gear.category.name}
 
     else
       li There is no climbing gear in the store.

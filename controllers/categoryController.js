@@ -34,10 +34,39 @@ exports.categories_list = function (req, res, next) {
       res.render("categories_list", { title: "List of all categories", categories_list: list_categories });
     });
 };
-// Display detail page for a specific category.
-exports.category_detail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: Category detail: ${req.params.name}`);
+
+// Display detail page for a specific Category.
+exports.category_detail = (req, res, next) => {
+  async.parallel(
+    {
+      category(callback) {
+        Category.findById(req.params.id).exec(callback);
+      },
+
+      category_gear(callback) {
+        Gear.find({ category: req.params.id }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.category == null) {
+        // No results.
+        const err = new Error("Category not found");
+        err.status = 404;
+        return next(err);
+      }
+      // Successful, so render
+      res.render("category_detail", {
+        title: "Category Detail",
+        category: results.category,
+        category_gear: results.category_gear,
+      });
+    }
+  );
 };
+
 
 // Display category create form on GET.
 exports.category_create_get = (req, res) => {
