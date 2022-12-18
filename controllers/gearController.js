@@ -1,6 +1,13 @@
 const Gear = require("../models/gear");
+const Category = require("../models/category");
 
 const async = require('async');
+
+const { body, validationResult } = require("express-validator");
+
+const capitalizeFirstLetter= (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 // Display list of all gear.
 exports.gear_list = function (req, res, next) {
@@ -44,16 +51,120 @@ exports.gear_detail = (req, res, next) => {
   );
 };
 
-
 // Display gear create form on GET.
-exports.gear_create_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: gear create GET");
+exports.gear_create_get = (req, res, next) => {
+  async.parallel(
+    {
+      gear(callback) {
+        Gear.find(callback);
+      },
+      categories(callback) {
+        Category.find(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      res.render("gear_form", {
+        title: "Add new gear",
+        gear: results.gear,
+        categories: results.categories,
+      });
+    }
+  );
 };
 
 // Handle gear create on POST.
-exports.gear_create_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: gear create POST");
-};
+exports.gear_create_post = [
+
+  // Validate and sanitize fields.
+  body("name", "Name must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("brand", "Brand must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("description", "Description must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("price", "Price must not be empty").escape(),
+  body("number_in_stock", "Number in stock must not be empty").escape(),
+  body("category.*").escape(),
+
+  // Process request after validation and sanitization.
+  (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a Gear object with escaped and trimmed data.
+    const gear = new Gear({
+      name: capitalizeFirstLetter(req.body.name),
+      brand: capitalizeFirstLetter(req.body.brand),
+      description: req.body.description,
+      price: req.body.price,
+      number_in_stock: req.body.number_in_stock,
+      category: req.body.category,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/error messages.
+
+      // Get all categories for form.
+      async.parallel(
+        {
+          categories(callback) {
+            Category.find(callback);
+          }
+        },
+        (err, results) => {
+          if (err) {
+            return next(err);
+          }
+
+          // Mark our selected categories as checked.
+          for (const category of results.categories) {
+            if (category._id === gear.category._id) {
+              category.checked = "true";
+            }
+          }
+          res.render("gear_form", {
+            title: "Add new gear",
+            categories: results.categories,
+            errors: errors.array(),
+          });
+        }
+      );
+      return;
+    } else {
+      // Data from form is valid.
+      // Check if Gear with same name and brand already exists.
+      Gear.findOne({ name: gear.name, brand: gear.brand}).exec((err, found_gear) => {
+        if (err) {
+          return next(err);
+        }
+
+        if (found_gear) {
+          // Gear exists, redirect to its detail page.
+          res.redirect(found_gear.url);
+        } else {
+          // Data from form is valid and no duplicates exist. Save gear.
+          gear.save((err) => {
+            if (err) {
+              return next(err);
+            }
+            // Successful: redirect to new gear record.
+            res.redirect(gear.url);
+          });
+        }
+      })
+    }
+  },
+];
+
 
 // Display gear delete form on GET.
 exports.gear_delete_get = (req, res) => {

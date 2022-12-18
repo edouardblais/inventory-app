@@ -1,0 +1,34 @@
+extends layout
+
+block content
+  h1= title
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='name') Name:
+      input#name.form-control(type='text', placeholder='Name of gear' name='name' required='true' value=(undefined===gear ? '' : gear.name) )
+    div.form-group
+      label Category:
+      div
+      for category in categories
+        div(style='display: inline; padding-right:10px;')
+        input.checkbox-input(type='checkbox', name='category', id=category._id, value=category._id, checked=category.checked )
+        label(for=category._id) #{category.name}
+    div.form-group
+      label(for='brand') Brand:
+      input#brand.form-control(type='text', placeholder='Brand of gear' name='brand' required='true' value=(undefined===gear ? '' : gear.brand) )
+    div.form-group
+      label(for='description') Description:
+      textarea#description.form-control(type='textarea', placeholder='Gear Description' name='description' required='true') #{undefined===gear ? '' : gear.description}
+    div.form-group
+      label(for='price') Price:
+      input#price.form-control(type='number', placeholder='0.00$' name='price' value=(undefined===gear ? '' : gear.price) required='true')
+    div.form-group
+      label(for='number_in_stock') Number in stock:
+      input#number_in_stock.form-control(type='number', placeholder='0' name='number_in_stock' value=(undefined===gear ? '' : gear.number_in_stock) required='true')
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg
