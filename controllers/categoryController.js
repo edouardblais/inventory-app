@@ -194,11 +194,79 @@ exports.category_delete_post = (req, res, next) => {
 
 
 // Display category update form on GET.
-exports.category_update_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: category update GET");
+exports.category_update_get = (req, res, next) => {
+  // Get category for form.
+  async.parallel(
+    {
+      category(callback) {
+        Category.findById(req.params.id)
+          .exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.category == null) {
+        // No results.
+        const err = new Error("Category not found");
+        err.status = 404;
+        return next(err);
+      }
+
+      res.render("category_form", {
+        title: "Update category",
+        category: results.category,
+      });
+    }
+  );
 };
 
+
 // Handle category update on POST.
-exports.category_update_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: category update POST");
-};
+exports.category_update_post = [
+   // Validate and sanitize the name field.
+   body("name", "Category name required").trim().isLength({ min: 1 }).escape(),
+
+   // Process request after validation and sanitization.
+   (req, res, next) => {
+     // Extract the validation errors from a request.
+     const errors = validationResult(req);
+ 
+     // Create a genre object with escaped and trimmed data and capitalize the first letter. Also, same id as to not create new one.
+     const category = new Category({ name: capitalizeFirstLetter(req.body.name), _id:req.params.id });
+ 
+     if (!errors.isEmpty()) {
+       // There are errors. Render the form again with sanitized values/error messages.
+       res.render("category_form", {
+         title: "Create a new category",
+         category,
+         errors: errors.array(),
+       });
+       return;
+     } else {
+       // Data from form is valid.
+       // Check if Category with same name already exists.
+       Category.findOne({ name: category.name }).exec((err, found_category) => {
+         if (err) {
+           return next(err);
+         }
+ 
+         if (found_category) {
+           // Category exists, redirect to its detail page.
+           res.redirect(found_category.url);
+         } else {
+          // Data from form is valid and no category with same name exists. Update the record.
+          Category.findByIdAndUpdate(req.params.id, category, {}, (err, thecategory) => {
+            if (err) {
+              return next(err);
+            }
+
+            // Successful: redirect to category detail page.
+            res.redirect(thecategory.url);
+          });
+         }
+       });
+      }
+  },
+];
