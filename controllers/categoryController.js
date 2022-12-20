@@ -125,15 +125,73 @@ exports.category_create_post = [
 ];
 
 
-// Display category delete form on GET.
-exports.category_delete_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: Category delete GET");
+// Display Category delete form on GET.
+exports.category_delete_get = (req, res, next) => {
+  async.parallel(
+    {
+      category(callback) {
+        Category.findById(req.params.id).exec(callback);
+      },
+      category_gear(callback) {
+        Gear.find({ category: req.params.id }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.category == null) {
+        // No results.
+        res.redirect("/shop/categories");
+      }
+      // Successful, so render.
+      res.render("category_delete", {
+        title: "Delete a category",
+        category: results.category,
+        category_gear: results.category_gear,
+      });
+    }
+  );
 };
 
-// Handle category delete on POST.
-exports.category_delete_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: category delete POST");
+
+// Handle Category delete on POST.
+exports.category_delete_post = (req, res, next) => {
+  async.parallel(
+    {
+      category(callback) {
+        Category.findById(req.body.categoryid).exec(callback);
+      },
+      category_gear(callback) {
+        Gear.find({ category: req.body.categoryid }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      // Success
+      if (results.category_gear.length > 0) {
+        // Category has gear associated to it. Render in same way as for GET route.
+        res.render("category_delete", {
+          title: "Delete a category",
+          category: results.category,
+          category_gear: results.category_gear,
+        });
+        return;
+      }
+      // Category has no gear associated. Delete object and redirect to the list of categories.
+      Category.findByIdAndRemove(req.body.categoryid, (err) => {
+        if (err) {
+          return next(err);
+        }
+        // Success - go to categories list
+        res.redirect("/shop/categories");
+      });
+    }
+  );
 };
+
 
 // Display category update form on GET.
 exports.category_update_get = (req, res) => {
