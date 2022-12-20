@@ -8,6 +8,9 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var shopRouter = require('./routes/shop');
 
+const compression = require("compression");
+const helmet = require("helmet");
+
 var app = express();
 
 // Set up mongoose connection
@@ -27,6 +30,10 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use(compression()); // Compress all routes
+app.use(helmet()); // Protection against common web vulnerabilities
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
