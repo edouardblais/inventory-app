@@ -1,0 +1,25 @@
+Models
+
+	Category
+
+		name: string
+		
+		**url: string
+
+	Gear
+
+		name: string
+		brand: string
+		description: string
+		price: number
+		number_in_stock: number 
+		category: Category reference
+
+		**url: string
+
+Add a brand model? To decide before initial population
+	
+	
+		
+
+	

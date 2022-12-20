@@ -55,9 +55,6 @@ exports.gear_detail = (req, res, next) => {
 exports.gear_create_get = (req, res, next) => {
   async.parallel(
     {
-      gear(callback) {
-        Gear.find(callback);
-      },
       categories(callback) {
         Category.find(callback);
       },
@@ -68,7 +65,6 @@ exports.gear_create_get = (req, res, next) => {
       }
       res.render("gear_form", {
         title: "Add new gear",
-        gear: results.gear,
         categories: results.categories,
       });
     }

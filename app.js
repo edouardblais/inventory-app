@@ -15,8 +15,9 @@ var app = express();
 
 // Set up mongoose connection
 const mongoose = require("mongoose");
-// put password in 
-const mongoDB = "mongodb+srv://edouardblais:sk84life@cluster0.utbckoz.mongodb.net/inventory_app?retryWrites=true&w=majority";
+const dev_db_url =
+  "mongodb+srv://edouardblais:sk84life@cluster0.utbckoz.mongodb.net/inventory_app?retryWrites=true&w=majority";
+const mongoDB = process.env.MONGODB_URI || dev_db_url;
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
