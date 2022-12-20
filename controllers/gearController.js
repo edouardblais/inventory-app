@@ -166,15 +166,56 @@ exports.gear_create_post = [
 ];
 
 
-// Display gear delete form on GET.
-exports.gear_delete_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: gear delete GET");
+// Display Gear delete form on GET.
+exports.gear_delete_get = (req, res, next) => {
+  async.parallel(
+    {
+      gear(callback) {
+        Gear.findById(req.params.id).populate('category').exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.gear == null) {
+        // No results.
+        res.redirect("/shop/gear");
+      }
+      // Successful, so render.
+      res.render("gear_delete", {
+        title: "Delete a gear item",
+        gear: results.gear,
+      });
+    }
+  );
 };
 
-// Handle gear delete on POST.
-exports.gear_delete_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: gear delete POST");
+
+// Handle Gear delete on POST.
+exports.gear_delete_post = (req, res, next) => {
+  async.parallel(
+    {
+      gear(callback) {
+        Gear.findById(req.body.gearid).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      // Success. Delete object and redirect to the list of gear.
+      Gear.findByIdAndRemove(req.body.gearid, (err) => {
+        if (err) {
+          return next(err);
+        }
+        // Success - go to gear list
+        res.redirect("/shop/gear");
+      });
+    }
+  );
 };
+
 
 // Display gear update form on GET.
 exports.gear_update_get = (req, res) => {

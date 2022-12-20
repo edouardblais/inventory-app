@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1 #{title}: #{gear.name}
+
+  p #{gear.brand} - #{gear.price} $ - #{gear.number_in_stock} in stock
+
+  p #{gear.description}
+
+    p Do you really want to delete this gear item from the store?
+
+    form(method='POST' action='')
+      div.form-group
+        input#gearid.form-control(type='hidden',name='gearid', required='true', value=gear._id )
+
+      button.btn.btn-primary(type='submit') Delete
