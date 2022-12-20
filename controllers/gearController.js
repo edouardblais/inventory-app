@@ -218,11 +218,122 @@ exports.gear_delete_post = (req, res, next) => {
 
 
 // Display gear update form on GET.
-exports.gear_update_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: gear update GET");
+exports.gear_update_get = (req, res, next) => {
+  // Get gear and categories for form.
+  async.parallel(
+    {
+      gear(callback) {
+        Gear.findById(req.params.id)
+          .populate("category")
+          .exec(callback);
+      },
+      categories(callback) {
+        Category.find(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.gear == null) {
+        // No results.
+        const err = new Error("Gear not found");
+        err.status = 404;
+        return next(err);
+      }
+      // Success.
+      // Mark our selected category as checked.
+      for (const category of results.categories) {
+          if (results.gear.category._id.toString() === category._id.toString()) {
+            category.checked = "true";
+          }
+      }
+      res.render("gear_form", {
+        title: "Update gear",
+        categories: results.categories,
+        gear: results.gear,
+      });
+    }
+  );
 };
 
+
 // Handle gear update on POST.
-exports.gear_update_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: gear update POST");
-};
+exports.gear_update_post = [
+   // Validate and sanitize fields.
+   body("name", "Name must not be empty.")
+   .trim()
+   .isLength({ min: 1 })
+   .escape(),
+  body("brand", "Brand must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("description", "Description must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("price", "Price must not be empty").escape(),
+  body("number_in_stock", "Number in stock must not be empty").escape(),
+  body("category.*").escape(),
+
+  // Process request after validation and sanitization.
+  (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a Gear object with escaped and trimmed data.
+    const gear = new Gear({
+      name: capitalizeFirstLetter(req.body.name),
+      brand: capitalizeFirstLetter(req.body.brand),
+      description: req.body.description,
+      price: req.body.price,
+      number_in_stock: req.body.number_in_stock,
+      category: req.body.category,
+      _id: req.params.id, //This is required, or a new ID will be assigned!
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/error messages.
+
+      // Get all categories for form.
+      async.parallel(
+        {
+          categories(callback) {
+            Category.find(callback);
+          }
+        },
+        (err, results) => {
+          if (err) {
+            return next(err);
+          }
+
+          // Mark our selected categories as checked.
+          for (const category of results.categories) {
+            if (category._id === gear.category._id) {
+              category.checked = "true";
+            }
+          }
+          res.render("gear_form", {
+            title: "Update gear",
+            categories: results.categories,
+            gear: results.gear,
+            errors: errors.array(),
+          });
+        }
+      );
+      return;
+    } 
+
+    // Data from form is valid. Update the record.
+    Gear.findByIdAndUpdate(req.params.id, gear, {}, (err, thegear) => {
+      if (err) {
+        return next(err);
+      }
+
+      // Successful: redirect to gear detail page.
+      res.redirect(thegear.url);
+    });
+  },
+];
+
