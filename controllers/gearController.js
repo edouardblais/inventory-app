@@ -18,7 +18,7 @@ exports.gear_list = function (req, res, next) {
       if (err) {
         return next(err);
       }
-      res.render("gear_list", { title: "Gear List", gear_list: list_gear });
+      res.render("gear_list", { title: "List of all equipment in store", gear_list: list_gear });
     });
 };
 
@@ -180,7 +180,6 @@ exports.gear_delete_get = (req, res, next) => {
       }
       // Successful, so render.
       res.render("gear_delete", {
-        title: "Delete a gear item",
         gear: results.gear,
       });
     }

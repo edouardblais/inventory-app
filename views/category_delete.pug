@@ -1,24 +1,19 @@
 extends layout
 
 block content
-  h1 #{title}: #{category.name}
-
   if category_gear.length
 
-    p #[strong Delete the following gear before attempting to delete this category.]
+    h4(class='main-title-color') #[strong Delete the following gear before attempting to delete this category]
 
     div(style='margin-left:20px;margin-top:20px')
 
-      h4 Gear
-
-      dl
+      ul(class='list-group')
       each gear in category_gear
-        dt
-          a(href=gear.url) #{gear.name}
-        dd #{gear.brand} - #{gear.price} $ - #{gear.number_in_stock} in stock
+        li(class='list-group-item')
+          a(href=gear.url) #{gear.name} (#{gear.brand})
 
   else
-    p Do you really want to delete this category?
+    h4(class='main-title-color') Do you really want to delete this category?
 
     form(method='POST' action='')
       div.form-group

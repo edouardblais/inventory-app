@@ -4,8 +4,6 @@ const Gear = require("../models/gear");
 const async = require("async");
 
 const { body, validationResult } = require("express-validator");
-const gear = require("../models/gear");
-const { isObjectIdOrHexString } = require("mongoose");
 
 const capitalizeFirstLetter= (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -172,7 +170,6 @@ exports.category_delete_get = (req, res, next) => {
       }
       // Successful, so render.
       res.render("category_delete", {
-        title: "Delete a category",
         category: results.category,
         category_gear: results.category_gear,
       });

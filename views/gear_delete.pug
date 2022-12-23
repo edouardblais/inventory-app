@@ -1,13 +1,14 @@
 extends layout
 
 block content
-  h1 #{title}: #{gear.name}
-
-  p #{gear.brand} - #{gear.price} $ - #{gear.number_in_stock} in stock
-
-  p #{gear.description}
-
-    p Do you really want to delete this gear item from the store?
+  h4(class='main-title-color') Do you really want to delete this gear item from the store?
+  | &nbsp;
+  h3 Name: #{gear.name}
+  h4 Category: #{gear.category.name}
+  h5 Brand: #{gear.brand} 
+  h5 Price: #{gear.price} $
+  h5 Number_in_stock: #{gear.number_in_stock} in stock
+  h5 Description: #{gear.description}
 
     form(method='POST' action='')
       div.form-group

@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  h1 #{gear.name}
+  h3(class='main-title-color') #{gear.name}
 
   p #[strong Category:]
     a(href=gear.category.url)  #{gear.category.name}

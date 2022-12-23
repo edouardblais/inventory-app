@@ -1,19 +1,18 @@
 extends layout
 
 block content
-
-  h1 Category: #{category.name}
+  h3(class='main-title-color') Category: #{category.name}
 
   div(style='margin-left:20px;margin-top:20px')
 
-    dl
+    ul(class='list-group')
       each gear in category_gear
-        dt
+        li(class='list-group-item')
           a(href=gear.url) #{gear.name}
-        dd #{gear.brand} - #{gear.price}$ - #{gear.number_in_stock} in stock
+          dd #{gear.brand} - #{gear.price}$ - #{gear.number_in_stock} in stock
 
       else
-        p This category has no gear.
+        h5 This category has no gear.
   
   hr
   p

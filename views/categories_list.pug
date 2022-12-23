@@ -1,12 +1,12 @@
 extends layout
 
 block content
-  h1= title
+  h3(class='main-title-color')= title
 
-  ul
+  ul(class='list-group')
     each category in categories_list
-      li
+      li(class='list-group-item')
         a(href=category.url) #{category.name}
 
     else
-      li There are no categories of gear.
+      li(class='list-group-item') There are no categories of gear.
