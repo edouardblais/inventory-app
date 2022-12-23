@@ -4,6 +4,8 @@ const Gear = require("../models/gear");
 const async = require("async");
 
 const { body, validationResult } = require("express-validator");
+const gear = require("../models/gear");
+const { isObjectIdOrHexString } = require("mongoose");
 
 const capitalizeFirstLetter= (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -18,12 +20,36 @@ exports.index = (req, res) => {
       categories_count(callback) {
         Category.countDocuments({}, callback);
       },
+      gear(callback) {
+        Gear.find({}).exec(callback);
+      }
     },
     (err, results) => {
+
+      let listOfBrands = [];
+
+      const totalPrice = results.gear.reduce((accumulator, obj) => 
+        accumulator + (obj.price*obj.number_in_stock), 0
+      )
+
+      const totalInStock = results.gear.reduce((accumulator, obj) => 
+        accumulator + obj.number_in_stock, 0
+      )
+
+      results.gear.forEach((item) => {
+        if (!listOfBrands.includes(item.brand)) {
+          listOfBrands.push(item.brand)
+        }
+      })
+
       res.render("index", {
-        title: "Climbing Shop Inventory",
+        title: "Go Climb Rocks",
+        subtitle: "Specialized Rock Climbing Equipment Shop",
         error: err,
         data: results,
+        total_price: totalPrice,
+        total_instock: totalInStock,
+        list_of_brands: listOfBrands,
       });
     }
   );

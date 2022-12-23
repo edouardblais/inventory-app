@@ -1,6 +1,12 @@
-.sidebar-nav {
-  margin-top: 20px;
-  padding: 0;
-  list-style: none;
+.nav-link:hover {
+  color:#f97316 !important;
+}
+
+.main-title-color {
+  color:#f97316 !important;
+}
+
+body {
+  height: 100vh;
 }
 

@@ -9,21 +9,21 @@ html(lang='en')
     script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js", integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV", crossorigin="anonymous")
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    div(class='container-fluid p-0')
+    div(class='container-fluid h-100 p-0')
         nav(class='navbar navbar-expand navbar-dark bg-dark')
-          h4(class=' text-white m-0') Ed's Climbing Shop Inventory
+          h4(class=' text-white m-0 main-title-color') Go Climb Rocks
           div(class='collapse navbar-collapse')
             ul(class='navbar-nav me-auto mb-auto flex-grow-1 justify-content-around')
               li(class='nav-item')
                 a(href='/shop' class='nav-link text-white') Home
               li(class='nav-item')
-                a(href='/shop/categories' class='nav-link text-white') All categories
+                a(href='/shop/categories' class='nav-link text-white') All Categories
               li(class='nav-item')
-                a(href='/shop/gear' class='nav-link text-white') All gear
+                a(href='/shop/gear' class='nav-link text-white') All Gear
               li(class='nav-item')
-                a(href='/shop/category/create' class='nav-link text-white') Add new category
+                a(href='/shop/category/create' class='nav-link text-white') Add New Category
               li(class='nav-item')
-                a(href='/shop/gear/create' class='nav-link text-white') Add new gear
+                a(href='/shop/gear/create' class='nav-link text-white') Add New Gear
 
-        div(class='row-sm-10 p-3')
+        div(class='row-sm-10 p-3 bg-light h-100')
           block content

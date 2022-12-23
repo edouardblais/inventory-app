@@ -1,14 +1,18 @@
 extends layout
 
 block content
-  h1= title
-  p Here's an overview of the store at this moment
-
+  h1(class='main-title-color')= title
+  h4= subtitle
+  | &nbsp;
   if error
-    p Error getting overview of the store.
+    h5 Error getting overview of the store.
   else
-    p The shop has the following categories and gear counts:
+    h5 Here are the shop's live stats
 
-    ul
-      li #[strong Categories:] !{data.categories_count} different categories
-      li #[strong Gear:] !{data.gear_count} different items
+    ul(class='list-group')
+      li(class='list-group-item') #[strong Total Different Categories:] !{data.categories_count}
+      li(class='list-group-item') #[strong Total Different Equipment:] !{data.gear_count}
+      li(class='list-group-item') #[strong Total Number of Brands:] !{list_of_brands.length}
+      li(class='list-group-item') #[strong All Brands Sold:] !{list_of_brands} 
+      li(class='list-group-item') #[strong Total Price of All Items:] !{total_price} $
+      li(class='list-group-item') #[strong Total Number of Items in Stock:] !{total_instock}
