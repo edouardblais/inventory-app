@@ -1,6 +1,6 @@
-#About
+# About
 
-This is inventory app for a fictive rock climbing shop!
+This is an inventory app for "Go Climb Rocks", a fictive rock climbing shop!
 
 It is built using Node.js and Express with MongoDB. 
 Railway is used to host the app.
